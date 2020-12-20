@@ -1,3 +1,5 @@
+export class Component {}
+
 function renderRealDOM(vdom) {
   if (vdom === undefined) return;
   if (typeof vdom === "string") {
@@ -33,7 +35,12 @@ export const render = function () {
 
 export function createElement(tagName, props, ...children) {
   if (typeof tagName === "function") {
-    return tagName.apply(null, [props, ...children]);
+    if (tagName.prototype instanceof Component) {
+      const instance = new tagName({ ...props, children });
+      return instance.render();
+    } else {
+      return tagName.apply(null, [props, ...children]);
+    }
   }
   return { tagName, props, children };
 }
