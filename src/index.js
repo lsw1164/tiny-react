@@ -1,22 +1,12 @@
-/* @jsx createElement */
-// default : React.createElement
+/* @jsx TinyReact.createElement */
+import TinyReact from "./TinyReact.js";
 
-import { Component, createElement, render } from "./react.js";
+const element = (
+  <div style="background: blue">
+    <h1>Hello world</h1>
+    <h2 style="color: red">Tiny React</h2>
+  </div>
+);
 
-class YourTitle extends Component {
-  render() {
-    return <h1>This is h1 tag in YourTitle</h1>;
-  }
-}
-
-function Title(props) {
-  return (
-    <div>
-      <YourTitle />
-      <h2>This is h2 tag</h2>
-      <p>This is p tag</p>
-    </div>
-  );
-}
-
-render(<Title />, document.querySelector("#root"));
+const $root = document.getElementById("root");
+TinyReact.render(element, $root);

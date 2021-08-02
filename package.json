@@ -4,6 +4,7 @@
   "description": "tiny react",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rimraf build && mkdir build && cpx public/* build/",
     "build": "babel src -d build -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +23,9 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10"
+  },
+  "dependencies": {
+    "cpx": "^1.5.0",
+    "rimraf": "^3.0.2"
   }
 }
