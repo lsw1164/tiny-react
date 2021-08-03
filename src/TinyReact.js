@@ -36,11 +36,10 @@ function render(element, container) {
     element.type === TEXT_ELEMENT
       ? document.createTextNode("")
       : document.createElement(element.type);
+
   Object.keys(element.props)
     .filter(isProperty)
-    .forEach((name) => {
-      dom[name] = element.props[name];
-    });
+    .forEach((propName) => (dom[propName] = element.props[propName]));
 
   element.props.children.forEach((child) => render(child, dom));
   container.appendChild(container);
