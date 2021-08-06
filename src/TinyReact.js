@@ -41,41 +41,75 @@ function createDom(fiber) {
   return dom;
 }
 
+function commitRoot() {
+  console.log("commitRoot::wipRoot: ", wipRoot);
+  commitWork(wipRoot.child);
+  wipRoot = null;
+}
+
+function commitWork(fiber) {
+  console.log("commitWork::fiber: ", fiber);
+  if (!fiber) {
+    return;
+  }
+  const domParent = fiber.parent.dom;
+  domParent.appendChild(fiber.dom);
+  commitWork(fiber.child);
+  commitWork(fiber.sibling);
+}
+
 function render(element, container) {
-  nextUnitOfWork = {
+  wipRoot = {
     dom: container,
     props: {
       children: [element],
     },
   };
+  nextUnitOfWork = wipRoot;
 }
 
 let nextUnitOfWork = null;
+let wipRoot = null;
 
 function workLoop(deadline) {
   let shouldYield = false;
+
   console.log(
-    `workLoop:: shouldYield: ${shouldYield}, deadline.timeRemaining(): ${deadline.timeRemaining()}`
+    `workLoop::start::shouldYield: ${shouldYield} 
+    deadline.timeRemaining(): ${deadline.timeRemaining()} 
+    nextUnitOfWork: `,
+    nextUnitOfWork,
+    "\n\twipRoot: ",
+    wipRoot
   );
+
   while (nextUnitOfWork && !shouldYield) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
     shouldYield = deadline.timeRemaining() < 1;
+
+    console.log(
+      `workLoop::while::shouldYield: ${shouldYield} 
+    deadline.timeRemaining(): ${deadline.timeRemaining()} 
+    nextUnitOfWork: `,
+      nextUnitOfWork
+    );
   }
+
+  if (!nextUnitOfWork && wipRoot) {
+    commitRoot();
+  }
+
   requestIdleCallback(workLoop);
 }
 
 requestIdleCallback(workLoop);
 
 function performUnitOfWork(fiber) {
-  console.log(`performUnitOfWork:: fiber:`);
-  console.log(fiber);
+  console.log(`performUnitOfWork:: fiber:`, fiber);
 
   //Add dom node
   if (!fiber.dom) {
     fiber.dom = createDom(fiber);
-  }
-  if (fiber.parent) {
-    fiber.parent.dom.appendChild(fiber.dom);
   }
 
   //Create new fibers
